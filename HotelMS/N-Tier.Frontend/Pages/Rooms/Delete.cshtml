@@ -1,0 +1,46 @@
+﻿@page
+@model HotelMS.Frontend.Pages.Rooms.DeleteModel
+
+@{
+	ViewData["Title"] = "Delete";
+	var paidCount = ViewData["paidCount"] as int? ?? 0;
+	var approvedCount = ViewData["approvedCount"] as int? ?? 0;
+}
+
+<div class="alert alert-warning" role="alert">
+	@if (paidCount > 0)
+	{
+		<p>
+			<strong>This action cannot be executed. This room is in @paidCount paid reservations.</strong>
+		</p>
+	}
+	else if(approvedCount > 0)
+	{
+		<p>
+			<strong>This action cannot be recovered. This room is in @approvedCount reservations. Do you wish to proceed?</strong>
+		</p>
+	}
+	else
+	{
+		<p>
+			<strong>This action cannot be recovered. The room will be permanently deleted.</strong>
+		</p>
+	}
+</div>
+
+<div>
+	<form method="post">
+		<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+		@if (paidCount > 0)
+		{
+			<button class="w-100 btn btn-lg btn-danger" type="submit" disabled>Delete room</button>
+		}
+		else
+		{
+			<button class="w-100 btn btn-lg btn-danger" type="submit">Delete room</button>
+		}
+	</form>
+</div>
+
+
+

@@ -1,0 +1,14 @@
+﻿@page "/daterangepickercomponent"
+@using BlazorDateRangePicker
+
+<DateRangePicker OnRangeSelect="HandleRangeSelect" />
+
+@code {
+    [Parameter]
+    public EventCallback<DateRange> OnRangeSelect { get; set; }
+
+    private async void HandleRangeSelect(DateRange dateRange)
+    {
+        await OnRangeSelect.InvokeAsync(dateRange);
+    }
+}

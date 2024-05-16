@@ -1,0 +1,25 @@
+﻿@page
+@using Microsoft.AspNetCore.Components;
+@using BlazorDateRangePicker;
+@model IndexModel
+@{
+    ViewData["Title"] = "Home page";
+}
+
+<div class="text-center" style="margin-top: 100px;">
+    <h1 class="display-4">Welcome</h1>
+	@if (User.IsInRole("Guest") || User.IsInRole("Administrator"))
+	{
+		<a class="btn btn-primary" asp-area="" asp-page="/Reservations/Create" >Make new reservation</a>
+	}
+	else
+	{
+		<p>Start by registering or logging in</p>
+	}
+</div>
+
+@section Scripts {
+    <script src="_framework/blazor.server.js"></script>
+}
+
+

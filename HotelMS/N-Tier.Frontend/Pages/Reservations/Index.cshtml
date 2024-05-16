@@ -1,0 +1,230 @@
+﻿@page
+@model HotelMS.Frontend.Pages.Reservations.IndexModel
+@using HotelMS.Application.Services;
+@using HotelMS.Core.Entities.Identity;
+@inject UserManager<ApplicationUser> UserManager;
+@inject IRoomService _roomService;
+
+
+@{
+	ViewData["Title"] = "Reservations";
+	var prevDisabled = !Model.HasPreviousPage ? "disabled" : "";
+	var nextDisabled = !Model.HasNextPage ? "disabled" : "";
+	var pageSize = @ViewData["pageSize"];
+	var SearchString = @ViewData["searchString"] as string;
+	var filterString = @ViewData["filterString"] as string;
+	var sortString = @ViewData["sortString"] as string;
+}
+
+<h1>Reservations</h1>
+
+<p>
+	<a asp-page="Create" class="btn btn-primary">Create New Reservation</a>
+</p>
+
+
+	<div class="d-flex justify-content-between mb-3">
+		<form method="get" class="form-inline">
+			<div class="input-group ml-3">
+				<input id="pageSizeInput" class="form-control" type="number" name="pageSize" value="@pageSize" title="Items Per Page" style="width: 100px; margin-right: 5px;" min="1">
+
+				<input id="myInput" class="form-control" type="search" placeholder="Search" name="SearchString" value="@SearchString" aria-label="Search" style="width: 200px;">
+				<div class="input-group-append">
+					<button class="btn btn-outline-success" type="submit">Search</button>
+				</div>
+			</div>
+			<select name="filterString" class="form-select mt-1" onchange="this.form.submit()">
+				<option value="none" selected="@("none" == filterString)">No filter</option>
+				<option value="pending" selected="@("pending" == filterString)">Pending</option>
+				<option value="approved" selected="@("approved" == filterString)">Only Approved</option>
+				<option value="payed" selected="@("payed" == filterString)">Payed</option>
+			</select>
+			<input type="hidden" name="sortString" value="@sortString" id="sortStringInput1" />
+		</form>
+	</div>
+
+
+	<table class="table table-striped">
+		<thead>
+			<tr>
+			<form id="sortForm"  method="get" class="form-inline">
+				<input type="hidden" name="SearchString" value="@SearchString" />
+				<input type="hidden" name="filterString" value="@filterString" />
+				<input type="hidden" name="pageSize" value="@pageSize" />
+				<input type="hidden" name="sortString" value="@sortString" id="sortStringInput" />
+				<th>
+					@Html.DisplayNameFor(model => model.Reservations.ElementAt(0).From)
+					<button type="submit" title="Sort ascending" onclick="changeSort('FromAsc')" style="background: none; border: none;">
+						<i class="bi bi-caret-up-fill"></i>
+					</button>
+					<button type="submit" title="Sort descending" onclick="changeSort('FromDesc')" style="background: none; border: none;">
+						<i class="bi bi-caret-down-fill"></i>
+					</button>
+				</th>
+				<th>
+					@Html.DisplayNameFor(model => model.Reservations.ElementAt(0).To)
+					<button type="submit" title="Sort ascending" onclick="changeSort('ToAsc')" style="background: none; border: none;">
+						<i class="bi bi-caret-up-fill"></i>
+					</button>
+					<button type="submit" title="Sort descending" onclick="changeSort('ToDesc')" style="background: none; border: none;">
+						<i class="bi bi-caret-down-fill"></i>
+					</button>
+				</th>
+				<th>
+					@Html.DisplayNameFor(model => model.Reservations.ElementAt(0).Room)
+					<button type="submit" title="Sort ascending" onclick="changeSort('RoomAsc')" style="background: none; border: none;">
+						<i class="bi bi-caret-up-fill"></i>
+					</button>
+					<button type="submit" title="Sort descending" onclick="changeSort('RoomDesc')" style="background: none; border: none;">
+						<i class="bi bi-caret-down-fill"></i>
+					</button>
+				</th>
+				<th>
+					@Html.DisplayNameFor(model => model.Reservations.ElementAt(0).Approval)
+					<button type="submit" title="Sort ascending" onclick="changeSort('ApprovalAsc')" style="background: none; border: none;">
+						<i class="bi bi-caret-up-fill"></i>
+					</button>
+					<button type="submit" title="Sort descending" onclick="changeSort('ApprovalDesc')" style="background: none; border: none;">
+						<i class="bi bi-caret-down-fill"></i>
+					</button>
+				</th>
+				<th>
+					@Html.DisplayNameFor(model => model.Reservations.ElementAt(0).Payed)
+					<button type="submit" title="Sort ascending" onclick="changeSort('PayedAsc')" style="background: none; border: none;">
+						<i class="bi bi-caret-up-fill"></i>
+					</button>
+					<button type="submit" title="Sort descending" onclick="changeSort('PayedDesc')" style="background: none; border: none;">
+						<i class="bi bi-caret-down-fill"></i>
+					</button>
+				</th>
+				<th>
+					@Html.DisplayNameFor(model => model.Reservations.ElementAt(0).Price)
+					<button type="submit" title="Sort ascending" onclick="changeSort('PriceAsc')" style="background: none; border: none;">
+						<i class="bi bi-caret-up-fill"></i>
+					</button>
+					<button type="submit" title="Sort descending" onclick="changeSort('PriceDesc')" style="background: none; border: none;">
+						<i class="bi bi-caret-down-fill"></i>
+					</button>
+				</th>
+				<th>
+					@Html.DisplayNameFor(model => model.Reservations.ElementAt(0).CreatedBy)
+				</th>
+				<th></th>
+				</form>
+			</tr>
+		</thead>
+		<tbody>
+			@if (Model.Reservations.Any())
+			{
+				@foreach (var item in Model.Reservations)
+				{
+					<tr>
+						<td>
+							@Html.DisplayFor(modelItem => item.From)
+						</td>
+						<td>
+							@Html.DisplayFor(modelItem => item.To)
+						</td>
+						<td>
+							@Html.DisplayFor(modelItem => item.Room.RoomNumber)
+						</td>
+						<td>
+							@Html.DisplayFor(modelItem => item.Approval)
+						</td>
+						<td>
+							@Html.DisplayFor(modelItem => item.Payed)
+						</td>
+						<td>
+							@Html.DisplayFor(modelItem => item.Price)
+						</td>
+						<td>
+							@{
+								var user = await UserManager.FindByIdAsync(item.CreatedBy.ToString());
+							}
+							@Html.DisplayFor(modelItem => user.Email)
+						</td>
+						<td>
+							@if ((User.IsInRole("Guest") && !item.Approval) || (User.IsInRole("Administrator") && item.Approval) && !item.Payed)
+							{
+								<a asp-page="./Edit" asp-route-id="@item.Id" asp-route-from="@item.From" asp-route-to="@item.To" class="btn btn-primary">Edit</a>
+							}
+
+							@if (User.IsInRole("Administrator") && !item.Approval)
+							{
+								<a asp-page="./Approve" asp-route-id="@item.Id" class="btn btn-primary">Approve</a>
+							}
+
+							@if (item.Approval == true && item.Payed == false && item.CreatedBy.ToString() == UserManager.GetUserId(User))
+							{
+								<a asp-page="./Pay" asp-route-id="@item.Id" class="btn btn-success">Pay</a>
+							}
+
+							@if (!item.Payed)
+							{
+								<a asp-page="./Delete" asp-route-id="@item.Id" class="btn btn-danger">Delete</a>
+							}
+
+							@if (User.IsInRole("Administrator") && item.Payed)
+							{
+								<div>
+									<a asp-page="./Refund" asp-route-id="@item.Id" class="btn btn-warning">Refund</a>
+									@if (item.CreatedBy.ToString() == UserManager.GetUserId(User))
+									{
+										<form method="post" style="display: inline-block; margin-left: 10px;">
+											<input type="hidden" name="ReservationId" value="@item.Id" />
+											<button type="submit" title="Download receipt" style="background: none; border: none;">
+												<i class="bi bi-download"></i>
+											</button>
+										</form>
+									}
+								</div>
+
+							}
+						</td>
+					</tr>
+				}
+			}
+			else
+			{
+			<tr>
+				<td colspan="5">No reservations found.</td>
+			</tr>
+			}
+		</tbody>
+	</table>
+
+<nav aria-label="Page navigation example">
+	<ul class="pagination">
+		<li class="page-item">
+			<a asp-action="Index"
+				asp-route-searchString="@SearchString"
+				asp-route-filterString="@filterString"
+			   asp-route-sortString="@sortString"
+			   asp-route-pageNumber="@(Model.pageIndex - 1)"
+				asp-route-pageSize="@pageSize"
+				class="btn btn-default page-link @prevDisabled">
+				Previous
+			</a>
+		</li>
+
+		<li class="page-item">
+			<a asp-action="Index"
+				asp-route-searchString="@SearchString"
+				asp-route-filterString="@filterString"
+				asp-route-sortString="@sortString"
+				asp-route-pageNumber="@(Model.pageIndex + 1)"
+				asp-route-pageSize="@pageSize"
+				class="btn btn-default page-link @nextDisabled">
+				Next
+			</a>
+		</li>
+	</ul>
+</nav>
+
+<script>
+	function changeSort(sortValue) {
+		document.getElementById('sortStringInput1').value = sortValue;
+		document.getElementById('sortStringInput').value = sortValue;
+		document.getElementById('sortForm').submit();
+	}
+</script>

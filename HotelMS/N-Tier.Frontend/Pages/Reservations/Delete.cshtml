@@ -1,0 +1,19 @@
+﻿@page
+@model HotelMS.Frontend.Pages.Reservations.DeleteModel
+
+@{
+    ViewData["Title"] = "Delete";
+}
+
+<div class="alert alert-warning" role="alert">
+    <p>
+        <strong>This action cannot be recovered, reservation will be permanently deleted.</strong>
+    </p>
+</div>
+
+<div>
+    <form method="post">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <button class="w-100 btn btn-lg btn-danger" type="submit">Delete reservation</button>
+    </form>
+</div>

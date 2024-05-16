@@ -1,0 +1,73 @@
+﻿@page
+@model HotelMS.Frontend.Pages.Reservations.CreateModel
+@using HotelMS.Core.Enums;
+@using BlazorDateRangePicker;
+
+@{
+	ViewData["Title"] = "Create";
+}
+
+<h1>Create</h1>
+
+<h4>Reservation</h4>
+<hr />
+<div class="row">
+	<div class="col-md-4">
+		<form method="post">
+			<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+			<div class="form-group">
+				<label asp-for="Reservation.From" class="control-label"></label>
+				<input asp-for="Reservation.From" class="form-control" onchange="DisplaySelectedDates()" />
+				<span asp-validation-for="Reservation.From" class="text-danger"></span>
+			</div>
+			<div class="form-group">
+				<label asp-for="Reservation.To" class="control-label"></label>
+				<input asp-for="Reservation.To" class="form-control" onchange="DisplaySelectedDates()" />
+				<span asp-validation-for="Reservation.To" class="text-danger"></span>
+			</div>
+			<div class="form-group" style="margin-top: 10px;">
+				<select id="roomSelect" asp-for="Reservation.RoomId" class="form-control">
+					<option value="" selected disabled>Please select a room</option>
+					@foreach (var room in Model.Rooms)
+					{
+						<option value="@room.Id">
+							@room.RoomNumber (@room.RoomType) - @room.Price€
+						</option>
+					}
+				</select>
+				<span asp-validation-for="Reservation.RoomId" class="text-danger"></span>
+			</div>
+			<div class="form-group" style="margin-top: 10px;">
+				<input type="submit" value="Create" class="btn btn-primary" />
+				<a asp-page="Index" class="btn btn-outline-primary ml-2">Back to List</a>
+			</div>
+		</form>
+	</div>
+</div>
+
+<script>
+	function DisplaySelectedDates() {
+		var fromDate = document.getElementById("Reservation_From").value;
+		var toDate = document.getElementById("Reservation_To").value;
+
+		$.ajax({
+			type: "POST",
+			url: "/Reservations/Create?handler=GetRange",
+			data: { "dateFrom": fromDate, "dateTo": toDate },
+			success: function (response) {
+				$("#roomSelect").empty();
+				$("#roomSelect").append('<option value="" selected disabled>Please select a room</option>');
+
+				response.forEach(function (optionValue) {
+					var optionText = optionValue.roomNumber;
+					var optionTextType = optionValue.helper;
+					var optionTextPrice = optionValue.price;
+
+					var option = '<option value="' + optionValue.id + '">' + optionText + ' (' + optionTextType + ')' + ' - ' + optionTextPrice + '€' + '</option>'; // Modified line
+					$("#roomSelect").append(option);
+				});
+			},
+		});
+	}
+
+</script>

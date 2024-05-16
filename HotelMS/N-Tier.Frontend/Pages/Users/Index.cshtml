@@ -1,0 +1,125 @@
+﻿@page
+@using HotelMS.Core.Entities.Identity;
+@model HotelMS.Frontend.Pages.Users.IndexModel
+@inject UserManager<ApplicationUser> UserManager;
+
+@{
+	ViewData["Title"] = "Index";
+	var prevDisabled = !Model.HasPreviousPage ? "disabled" : "";
+	var nextDisabled = !Model.HasNextPage ? "disabled" : "";
+	var pageSize = @ViewData["pageSize"];
+	var SearchString = @ViewData["searchString"] as string;
+	var sortString = @ViewData["sortString"] as string;
+}
+
+<h1>Users</h1>
+
+<form method="get">
+	<div class="d-flex justify-content-between mb-3">
+		<div class="form-inline">
+			<div class="input-group ml-3">
+				<input id="pageSizeInput" class="form-control" type="number" name="pageSize" value="@pageSize" title="Items Per Page" style="width: 100px; margin-right: 5px;" min="1">
+
+				<input id="myInput" class="form-control" type="search" placeholder="Search" name="SearchString" value="@SearchString" aria-label="Search" style="width: 200px;">
+				<div class="input-group-append">
+					<button class="btn btn-outline-success" type="submit">Search</button>
+				</div>
+			</div>
+
+		</div>
+	</div>
+
+	<input type="hidden" name="sortString" value="@sortString" />
+
+
+	<table class="table table-striped">
+		<thead>
+			<tr>
+				<th>
+					@Html.DisplayNameFor(model => model.Users.ElementAt(0).FirstName)
+					<button type="submit" title="Sort ascending" onclick="changeSort('FirstNameAsc')" style="background: none; border: none;">
+						<i class="bi bi-caret-up-fill"></i>
+					</button>
+					<button type="submit" title="Sort descending" onclick="changeSort('FirstNameDesc')" style="background: none; border: none;">
+						<i class="bi bi-caret-down-fill"></i>
+					</button>
+				</th>
+				<th>
+					@Html.DisplayNameFor(model => model.Users.ElementAt(0).LastName)
+					<button type="submit" title="Sort ascending" onclick="changeSort('LastNameAsc')" style="background: none; border: none;">
+						<i class="bi bi-caret-up-fill"></i>
+					</button>
+					<button type="submit" title="Sort descending" onclick="changeSort('LastNameDesc')" style="background: none; border: none;">
+						<i class="bi bi-caret-down-fill"></i>
+					</button>
+				</th>
+				<th>
+					@Html.DisplayNameFor(model => model.Users.ElementAt(0).Email)
+					<button type="submit" title="Sort ascending" onclick="changeSort('EmailAsc')" style="background: none; border: none;">
+						<i class="bi bi-caret-up-fill"></i>
+					</button>
+					<button type="submit" title="Sort descending" onclick="changeSort('EmailDesc')" style="background: none; border: none;">
+						<i class="bi bi-caret-down-fill"></i>
+					</button>
+				</th>
+				<th></th>
+			</tr>
+		</thead>
+		<tbody>
+			@foreach (var item in Model.Users)
+			{
+				<tr>
+					<td>
+						@Html.DisplayFor(modelItem => item.FirstName)
+					</td>
+					<td>
+						@Html.DisplayFor(modelItem => item.LastName)
+					</td>
+					<td>
+						@Html.DisplayFor(modelItem => item.Email)
+					</td>
+					<td>
+						<a asp-page="./Edit" asp-route-id="@item.Id" class="btn btn-primary">Edit</a>
+						@if (item.Id != UserManager.GetUserId(User))
+						{
+							<a asp-page="./Delete" asp-route-id="@item.Id" class="btn btn-danger">Delete</a>
+						}
+					</td>
+				</tr>
+			}
+		</tbody>
+	</table>
+</form>
+
+<nav aria-label="Page navigation example">
+	<ul class="pagination">
+		<li class="page-item">
+			<a asp-action="Index"
+			   asp-route-searchString="@SearchString"
+			   asp-route-pageNumber="@(Model.pageIndex - 1)"
+			   asp-route-sortString="@sortString"
+			   asp-route-pageSize="@pageSize"
+				class="btn btn-default page-link @prevDisabled">
+				Previous
+			</a>
+		</li>
+
+		<li class="page-item">
+			<a asp-action="Index"
+			   asp-route-searchString="@SearchString"
+			   asp-route-pageNumber="@(Model.pageIndex + 1)"
+			   asp-route-sortString="@sortString"
+			   asp-route-pageSize="@pageSize"
+				class="btn btn-default page-link @nextDisabled">
+				Next
+			</a>
+		</li>
+	</ul>
+</nav>
+
+<script>
+	function changeSort(sortValue) {
+		document.querySelector('input[name="sortString"]').value = sortValue;
+		document.querySelector('form').submit();
+	}
+</script>

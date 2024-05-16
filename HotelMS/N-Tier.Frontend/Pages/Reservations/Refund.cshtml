@@ -1,0 +1,19 @@
+﻿@page
+@model HotelMS.Frontend.Pages.Reservations.RefundModel
+
+@{
+	ViewData["Title"] = "Refund";
+}
+
+<div class="alert alert-warning" role="alert">
+	<p>
+		<strong>This action cannot be undone. A refund will be issued, and the reservation will be canceled permanently.</strong>
+	</p>
+</div>
+
+<div>
+	<form method="post">
+		<div asp-validation-summary="ModelOnly" class="text-warning"></div>
+		<button class="w-100 btn btn-lg btn-warning" type="submit">Issue refund</button>
+	</form>
+</div>

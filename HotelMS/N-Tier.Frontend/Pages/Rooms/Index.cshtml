@@ -1,0 +1,145 @@
+﻿@page
+@model HotelMS.Frontend.Pages.Rooms.IndexModel
+
+@{
+	ViewData["Title"] = "Rooms";
+	var prevDisabled = !Model.HasPreviousPage ? "disabled" : "";
+	var nextDisabled = !Model.HasNextPage ? "disabled" : "";
+	var pageSize = @ViewData["pageSize"];
+	var filterString = @ViewData["filterString"] as string;
+	var sortString = @ViewData["sortString"] as string;
+	var SearchString = @ViewData["searchString"] as string;
+}
+
+<h1>Rooms</h1>
+
+<p>
+	<a asp-page="Create" class="btn btn-primary">Create New Room</a>
+</p>
+
+<form method="get">
+	<div class="d-flex justify-content-between mb-3">
+		<div class="form-inline">
+			<div class="input-group ml-3">
+				<input id="pageSizeInput" class="form-control" type="number" name="pageSize" value="@pageSize" title="Items Per Page" style="width: 100px; margin-right: 5px;" min="1">
+
+				<input id="myInput" class="form-control" type="search" placeholder="Search" name="SearchString" value="@SearchString" aria-label="Search" style="width: 200px;">
+				<div class="input-group-append">
+					<button class="btn btn-outline-success" type="submit">Search</button>
+				</div>
+			</div>
+			<select name="filterString" class="form-select mt-1" onchange="this.form.submit()">
+				<option value="none" selected="@("none" == filterString)">No filter</option>
+				<option value="available" selected="@("available" == filterString)">Available</option>
+				<option value="unavailable" selected="@("unavailable" == filterString)">Unavailable</option>
+			</select>
+		</div>
+	</div>
+
+	<input type="hidden" name="sortString" value="@sortString" />
+
+	<table class="table table-striped">
+		<thead>
+			<tr>
+				<th>
+					@Html.DisplayNameFor(model => model.Rooms.ElementAt(0).RoomNumber)
+					<button type="submit" title="Sort ascending" onclick="changeSort('RoomNumberAsc')" style="background: none; border: none;">
+						<i class="bi bi-caret-up-fill"></i>
+					</button>
+					<button type="submit" title="Sort descending" onclick="changeSort('RoomNumberDesc')" style="background: none; border: none;">
+						<i class="bi bi-caret-down-fill"></i>
+					</button>
+				</th>
+				<th>
+					@Html.DisplayNameFor(model => model.Rooms.ElementAt(0).RoomType)
+					<button type="submit" title="Sort ascending" onclick="changeSort('RoomTypeAsc')" style="background: none; border: none;">
+						<i class="bi bi-caret-up-fill"></i>
+					</button>
+					<button type="submit" title="Sort descending" onclick="changeSort('RoomTypeDesc')" style="background: none; border: none;">
+						<i class="bi bi-caret-down-fill"></i>
+					</button>
+				</th>
+				<th>
+					@Html.DisplayNameFor(model => model.Rooms.ElementAt(0).AvailabilityStatus)
+					<button type="submit" title="Sort ascending" onclick="changeSort('AvailabilityStatusAsc')" style="background: none; border: none;">
+						<i class="bi bi-caret-up-fill"></i>
+					</button>
+					<button type="submit" title="Sort descending" onclick="changeSort('AvailabilityStatusDesc')" style="background: none; border: none;">
+						<i class="bi bi-caret-down-fill"></i>
+					</button>
+				</th>
+				<th>
+					@Html.DisplayNameFor(model => model.Rooms.ElementAt(0).Price)
+					<button type="submit" title="Sort ascending" onclick="changeSort('PriceAsc')" style="background: none; border: none;">
+						<i class="bi bi-caret-up-fill"></i>
+					</button>
+					<button type="submit" title="Sort descending" onclick="changeSort('PriceDesc')" style="background: none; border: none;">
+						<i class="bi bi-caret-down-fill"></i>
+					</button>
+				</th>
+				<th></th>
+			</tr>
+		</thead>
+		<tbody>
+			@foreach (var item in Model.Rooms)
+			{
+				<tr>
+					<td >
+						@Html.DisplayFor(modelItem => item.RoomNumber)
+					</td>
+					<td>
+						@Html.DisplayFor(modelItem => item.RoomType)
+					</td>
+					<td>
+						@Html.DisplayFor(modelItem => item.AvailabilityStatus)
+					</td>
+					<td>
+						@Html.DisplayFor(modelItem => item.Price)
+					</td>
+					<td>
+						<a asp-page="./Edit" asp-route-id="@item.Id" class="btn btn-primary">Edit</a>
+						<a asp-page="./Delete" asp-route-id="@item.Id" class="btn btn-danger">Delete</a>
+					</td>
+				</tr>
+			}
+		</tbody>
+	</table>
+</form>
+
+<nav aria-label="Page navigation example">
+	<ul class="pagination">
+		<li class="page-item">
+			<a asp-action="Index"
+			   asp-route-searchString="@SearchString"
+			   asp-route-filterString="@filterString"
+			   asp-route-pageNumber="@(Model.pageIndex - 1)"
+			   asp-route-sortString="@sortString"
+			   asp-route-pageSize="@pageSize"
+			   class="btn btn-default page-link @prevDisabled">
+				Previous
+			</a>
+		</li>
+
+		<li class="page-item">
+			<a asp-action="Index"
+			   asp-route-searchString="@SearchString"
+			   asp-route-filterString="@filterString"
+				asp-route-pageNumber="@(Model.pageIndex + 1)"
+				asp-route-sortString="@sortString"
+			    asp-route-pageSize="@pageSize"
+				class="btn btn-default page-link @nextDisabled">
+				Next
+			</a>
+		</li>
+	</ul>
+</nav>
+
+@section Scripts {
+
+}
+<script>
+	function changeSort(sortValue) {
+		document.querySelector('input[name="sortString"]').value = sortValue;
+		document.querySelector('form').submit();
+	}
+</script>

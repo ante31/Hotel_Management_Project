@@ -1,0 +1,38 @@
+﻿@page
+@model HotelMS.Frontend.Pages.Reservations.ApproveModel
+
+@{
+	ViewData["Title"] = "Approve";
+	var approvedCount = ViewData["approvedCount"] as int? ?? 0;
+}
+
+<div class="alert alert-primary" role="alert">
+	@if (approvedCount > 0)
+	{
+		<p>
+			<strong>This action cannot be executed. There already is an approved reservation of this room on given dates.</strong>
+		</p>
+	}
+	else
+	{
+		<p>
+			<strong>Do you want to approve this reservation?</strong>
+		</p>
+	}
+</div>
+
+<div>
+	<form method="post">
+		<div asp-validation-summary="ModelOnly" class="text-primary"></div>
+		@if (approvedCount > 0)
+		{
+			<button class="w-100 btn btn-lg btn-primary" type="submit" disabled>Approve this reservation</button>
+		}
+		else
+		{
+			<button class="w-100 btn btn-lg btn-primary" type="submit">Approve this reservation</button>
+
+		}
+	</form>
+</div>
+

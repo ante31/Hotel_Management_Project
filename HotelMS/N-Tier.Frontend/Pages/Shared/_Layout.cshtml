@@ -1,0 +1,79 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using HotelMS.Core.Entities.Identity;
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Hotel Reservation System</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/N_Tier.Frontend.styles.css" asp-append-version="true" />
+    <link rel="stylesheet" href="_content/BlazorDateRangePicker/daterangepicker.min.css" />
+</head>
+<body style="min-height: 90vh;">
+    <header>
+		<nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light" style="background-color: #e3f2fd;">
+			<div class="container">
+				<a class="navbar-brand text-dark" asp-area="" asp-page="/Index">Hotel Dalmatia</a>
+				<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+						aria-expanded="false" aria-label="Toggle navigation">
+					<span class="navbar-toggler-icon"></span>
+				</button>
+				<div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+					<ul class="navbar-nav flex-grow-1">
+						@if (User.IsInRole("Administrator"))
+						{
+							<li class="nav-item">
+								<a class="nav-link text-dark" asp-area="" asp-page="/Reservations/Index">All Reservations</a>
+							</li>
+							<li class="nav-item">
+								<a class="nav-link text-dark" asp-area="" asp-page="/Rooms/Index">Rooms</a>
+							</li>
+							<li class="nav-item">
+								<a class="nav-link text-dark" asp-area="" asp-page="/Users/Index">Users</a>
+							</li>
+
+						}
+
+						@if (User.IsInRole("Guest"))
+						{
+							<li class="nav-item">
+								<a class="nav-link text-dark" asp-area="" asp-page="/Reservations/Index">My reservations</a>
+							</li>
+						}
+					</ul>
+					<partial name="_LoginPartial" />
+				</div>
+			</div>
+		</nav>
+
+
+    </header>
+    <div class="container mt-3">
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+    </div>
+
+	<footer class="border-top footer fixed-bottom text-muted py-3" style="background-color: #e3f2fd;">
+		<!-- Changed 'bottom' to 'fixed-bottom' -->
+		<div class="container text-center">
+			&copy; 2023 - N_Tier.Frontend - <a asp-area="" asp-page="/Privacy">Privacy</a>
+		</div>
+	</footer>
+
+	<script src="//code.jquery.com/jquery-1.10.2.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="_content/BlazorDateRangePicker/clickAndPositionHandler.js"></script>
+
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>
